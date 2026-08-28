@@ -1,32 +1,13 @@
-import globals from 'globals';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+import globals from 'globals';
+import { defineConfig } from 'eslint/config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default [...compat.extends('eslint:recommended'), {
-    languageOptions: {
-        sourceType: 'module',
-        globals: {
-            ...globals.browser,
-        },
-
-        ecmaVersion: 'latest',
-    },
-
-    // These are only some of the most useful ESLint rules
+export default defineConfig([
+  { files: ['**/*.{js,mjs,cjs}'], plugins: { js }, extends: ['js/recommended'], languageOptions: { globals: globals.browser } },
+  { files: ['**/*.js'], languageOptions: { sourceType: 'commonjs' } },
+  {
     rules: {
-        'linebreak-style': ['error', 'windows'],    // Forces Windows line breaks (ASCII 13 + 10) over Linux line breaks (ASCII 13)
         semi: ['error', 'always'],                  // Forces the use of a semicolon at the end of each statement
-        strict: ['error', 'global'],                // Forces the use of 'use strict';
         'no-var': 'error',                          // Prevents declaring variables with var
         'prefer-const': 'error',                    // Forces variables whose value is not reassigned to be declared with const
         camelcase: 'error',                         // Forces camelcase and prevents the use of the dash or underscore
@@ -51,5 +32,6 @@ export default [...compat.extends('eslint:recommended'), {
         'no-constant-condition': 'warn',            // Forbids constant conditions (e.g., if (true), or if (1 === 1))
         'valid-typeof': 'error',                    // Prevents using an incorrect data type in typeof
         'brace-style': 'error',                     // Forces opening curly braces to be in the control line that starts them
-    },
-}];
+    }
+  }
+]);
